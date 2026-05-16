@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
   host: process.env.MAIL_HOST,
@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendContactEmails = async (contactData) => {
+export const sendContactEmails = async (contactData) => {
   const { name, email, message, subject } = contactData;
 
   // 1. Send email to Admin (User)
@@ -42,5 +42,3 @@ const sendContactEmails = async (contactData) => {
   await transporter.sendMail(adminMailOptions);
   await transporter.sendMail(userMailOptions);
 };
-
-module.exports = { sendContactEmails };

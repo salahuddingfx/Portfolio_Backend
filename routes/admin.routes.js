@@ -35,6 +35,7 @@ router.delete('/projects/:id', authMiddleware, adminController.deleteProject);
 router.get('/reviews', adminController.getReviews);
 router.post('/reviews', authMiddleware, adminController.createReview);
 router.put('/reviews/:id', authMiddleware, adminController.updateReview);
-router.delete('/reviews/:id', authMiddleware, adminController.deleteReview);
+router.get('/settings', adminController.getSettings);
+router.put('/settings', authMiddleware, adminController.updateSettings);
 
 export default router;

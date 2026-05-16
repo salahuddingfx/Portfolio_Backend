@@ -1,7 +1,41 @@
 import Project from '../models/Project.js';
 import Review from '../models/Review.js';
 import Admin from '../models/Admin.js';
+import Settings from '../models/Settings.js';
 import jwt from 'jsonwebtoken';
+
+// ... (previous exports)
+
+// Settings
+export const getSettings = async (req, res) => {
+  try {
+    let settings = await Settings.findOne();
+    if (!settings) {
+      settings = await Settings.create({
+        bio: 'Full Stack Developer based in Cox\'s Bazar',
+        aboutTitle: 'I craft digital experiences.',
+        aboutText: 'I specialize in building modern web applications with a focus on performance.',
+        experienceYears: '4+',
+        projectsCompleted: '50+',
+        email: 'salahuddinkaderappy@gmail.com',
+        location: 'Cox\'s Bazar, Bangladesh',
+        socials: { github: '#', linkedin: '#', twitter: '#' }
+      });
+    }
+    res.json(settings);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateSettings = async (req, res) => {
+  try {
+    const settings = await Settings.findOneAndUpdate({}, req.body, { new: true, upsert: true });
+    res.json(settings);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 
 // Auth
 export const login = async (req, res) => {

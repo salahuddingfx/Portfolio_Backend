@@ -19,7 +19,11 @@ router.post('/contact', async (req, res) => {
   }
 });
 
+router.post('/log-visit', adminController.logVisit);
+
 // Protected routes
+router.get('/analytics', authMiddleware, adminController.getAnalytics);
+router.get('/visitors', authMiddleware, adminController.getRecentVisitors);
 router.post('/upload', authMiddleware, upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded' });

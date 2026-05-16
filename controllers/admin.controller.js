@@ -2,7 +2,93 @@ import Project from '../models/Project.js';
 import Review from '../models/Review.js';
 import Admin from '../models/Admin.js';
 import Settings from '../models/Settings.js';
+import Visitor from '../models/Visitor.js';
 import jwt from 'jsonwebtoken';
+import axios from 'axios';
+
+// Analytics & Visitors
+export const logVisit = async (req, res) => {
+  const { path, referrer } = req.body;
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const userAgent = req.headers['user-agent'];
+
+  try {
+    // Basic IP lookup (using ip-api.com for free)
+    let country = 'Unknown';
+    let city = 'Unknown';
+    
+    try {
+      const geoRes = await axios.get(`http://ip-api.com/json/${ip}`);
+      if (geoRes.data.status === 'success') {
+        country = geoRes.data.country;
+        city = geoRes.data.city;
+      }
+    } catch (err) {
+      console.error('Geo lookup failed:', err.message);
+    }
+
+    await Visitor.create({
+      ip,
+      userAgent,
+      referrer,
+      path,
+      country,
+      city
+    });
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error('Log visit error:', error);
+    res.sendStatus(500);
+  }
+};
+
+export const getAnalytics = async (req, res) => {
+  try {
+    const totalVisits = await Visitor.countDocuments();
+    const uniqueVisitors = await Visitor.distinct('ip').then(ips => ips.length);
+    
+    // Top Countries
+    const topCountries = await Visitor.aggregate([
+      { $group: { _id: '$country', count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 5 }
+    ]);
+
+    // Visits over last 7 days
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+    const visitsByDay = await Visitor.aggregate([
+      { $match: { createdAt: { $gte: sevenDaysAgo } } },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    res.json({
+      totalVisits,
+      uniqueVisitors,
+      topCountries,
+      visitsByDay
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getRecentVisitors = async (req, res) => {
+  try {
+    const visitors = await Visitor.find().sort({ createdAt: -1 }).limit(50);
+    res.json(visitors);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 // ... (previous exports)
 

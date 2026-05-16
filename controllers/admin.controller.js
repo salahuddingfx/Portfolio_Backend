@@ -1,10 +1,10 @@
-const Project = require('../models/Project');
-const Review = require('../models/Review');
-const Admin = require('../models/Admin');
-const jwt = require('jsonwebtoken');
+import Project from '../models/Project.js';
+import Review from '../models/Review.js';
+import Admin from '../models/Admin.js';
+import jwt from 'jsonwebtoken';
 
 // Auth
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   const { username, password } = req.body;
   try {
     const admin = await Admin.findOne({ username });
@@ -19,7 +19,7 @@ exports.login = async (req, res) => {
 };
 
 // Projects
-exports.getProjects = async (req, res) => {
+export const getProjects = async (req, res) => {
   try {
     const projects = await Project.find().sort({ order: 1 });
     res.json(projects);
@@ -28,7 +28,7 @@ exports.getProjects = async (req, res) => {
   }
 };
 
-exports.createProject = async (req, res) => {
+export const createProject = async (req, res) => {
   try {
     const project = await Project.create(req.body);
     res.status(201).json(project);
@@ -37,7 +37,7 @@ exports.createProject = async (req, res) => {
   }
 };
 
-exports.updateProject = async (req, res) => {
+export const updateProject = async (req, res) => {
   try {
     const project = await Project.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(project);
@@ -46,7 +46,7 @@ exports.updateProject = async (req, res) => {
   }
 };
 
-exports.deleteProject = async (req, res) => {
+export const deleteProject = async (req, res) => {
   try {
     await Project.findByIdAndDelete(req.params.id);
     res.json({ message: 'Project deleted' });
@@ -56,7 +56,7 @@ exports.deleteProject = async (req, res) => {
 };
 
 // Reviews
-exports.getReviews = async (req, res) => {
+export const getReviews = async (req, res) => {
   try {
     const reviews = await Review.find().sort({ order: 1 });
     res.json(reviews);
@@ -65,7 +65,7 @@ exports.getReviews = async (req, res) => {
   }
 };
 
-exports.createReview = async (req, res) => {
+export const createReview = async (req, res) => {
   try {
     const review = await Review.create(req.body);
     res.status(201).json(review);
@@ -74,7 +74,7 @@ exports.createReview = async (req, res) => {
   }
 };
 
-exports.updateReview = async (req, res) => {
+export const updateReview = async (req, res) => {
   try {
     const review = await Review.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(review);
@@ -83,7 +83,7 @@ exports.updateReview = async (req, res) => {
   }
 };
 
-exports.deleteReview = async (req, res) => {
+export const deleteReview = async (req, res) => {
   try {
     await Review.findByIdAndDelete(req.params.id);
     res.json({ message: 'Review deleted' });

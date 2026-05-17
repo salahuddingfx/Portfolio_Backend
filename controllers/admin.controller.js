@@ -280,7 +280,16 @@ export const deleteProject = async (req, res) => {
 // Reviews
 export const getReviews = async (req, res) => {
   try {
-    const reviews = await Review.find().sort({ order: 1 });
+    const reviews = await Review.find({ status: 'approved' }).sort({ order: 1 });
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getReviewsForAdmin = async (req, res) => {
+  try {
+    const reviews = await Review.find().sort({ createdAt: -1 });
     res.json(reviews);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -382,7 +391,8 @@ export const submitReviewWithInvite = async (req, res) => {
       company,
       text,
       rating: normalizedRating,
-      avatar
+      avatar,
+      status: 'pending'
     });
 
     invite.usedAt = new Date();

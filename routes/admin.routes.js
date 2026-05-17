@@ -42,6 +42,9 @@ router.put('/projects/:id', authMiddleware, adminController.updateProject);
 router.delete('/projects/:id', authMiddleware, adminController.deleteProject);
 
 router.get('/reviews', adminController.getReviews);
+router.get('/reviews/invite/:token', adminController.getReviewInvite);
+router.post('/reviews/submit', adminController.submitReviewWithInvite);
+router.post('/reviews/invite', authMiddleware, adminController.createReviewInvite);
 router.post('/reviews', authMiddleware, adminController.createReview);
 router.put('/reviews/:id', authMiddleware, adminController.updateReview);
 router.delete('/reviews/:id', authMiddleware, adminController.deleteReview);

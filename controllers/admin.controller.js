@@ -7,6 +7,7 @@ import Certificate from '../models/Certificate.js';
 import BlogPost from '../models/BlogPost.js';
 import Service from '../models/Service.js';
 import TimelineEntry from '../models/TimelineEntry.js';
+import ReviewInvite from '../models/ReviewInvite.js';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import crypto from 'crypto';
@@ -308,6 +309,86 @@ export const deleteReview = async (req, res) => {
   try {
     await Review.findByIdAndDelete(req.params.id);
     res.json({ message: 'Review deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const createReviewInvite = async (req, res) => {
+  try {
+    const { label, email, expiresInDays } = req.body;
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
+    const days = Number(expiresInDays) || 7;
+
+    const invite = await ReviewInvite.create({
+      tokenHash,
+      label: label?.trim() || undefined,
+      email: email?.trim() || undefined,
+      expiresAt: new Date(Date.now() + days * 24 * 60 * 60 * 1000),
+      createdBy: req.adminId
+    });
+
+    const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const shareUrl = `${baseUrl}/review/${rawToken}`;
+
+    res.json({ shareUrl, expiresAt: invite.expiresAt });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getReviewInvite = async (req, res) => {
+  try {
+    const tokenHash = crypto.createHash('sha256').update(req.params.token).digest('hex');
+    const invite = await ReviewInvite.findOne({
+      tokenHash,
+      expiresAt: { $gt: new Date() },
+      usedAt: null
+    });
+
+    if (!invite) {
+      return res.status(404).json({ message: 'Invite not found or expired' });
+    }
+
+    res.json({ label: invite.label, expiresAt: invite.expiresAt });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const submitReviewWithInvite = async (req, res) => {
+  try {
+    const { token, name, role, company, text, rating, avatar } = req.body;
+    if (!token || !name || !role || !text) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+    const invite = await ReviewInvite.findOne({
+      tokenHash,
+      expiresAt: { $gt: new Date() },
+      usedAt: null
+    });
+
+    if (!invite) {
+      return res.status(400).json({ message: 'Invite is invalid or expired' });
+    }
+
+    const normalizedRating = Math.min(5, Math.max(1, Number(rating || 5)));
+    const review = await Review.create({
+      name,
+      role,
+      company,
+      text,
+      rating: normalizedRating,
+      avatar
+    });
+
+    invite.usedAt = new Date();
+    await invite.save();
+
+    res.status(201).json({ message: 'Review submitted', reviewId: review._id });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

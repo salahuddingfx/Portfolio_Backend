@@ -3,15 +3,20 @@ import * as adminController from '../controllers/admin.controller.js';
 import authMiddleware from '../middleware/auth.middleware.js';
 import upload from '../middleware/upload.middleware.js';
 import { sendContactEmails } from '../utils/mail.js';
+import { apiLimiter, contactLimiter, reviewSubmitLimiter, authLimiter } from '../middleware/rateLimit.middleware.js';
+import { validateContact, validateReviewSubmit } from '../middleware/validation.middleware.js';
 
 const router = express.Router();
 
-// Public routes (for testing or initial login)
-router.post('/login', adminController.login);
-router.post('/forgot-password', adminController.requestPasswordReset);
-router.post('/reset-password', adminController.resetPassword);
+// Apply general api limiter to all routes
+router.use(apiLimiter);
 
-router.post('/contact', async (req, res) => {
+// Public routes (for testing or initial login)
+router.post('/login', authLimiter, adminController.login);
+router.post('/forgot-password', authLimiter, adminController.requestPasswordReset);
+router.post('/reset-password', authLimiter, adminController.resetPassword);
+
+router.post('/contact', contactLimiter, validateContact, async (req, res) => {
   try {
     await sendContactEmails(req.body);
     res.json({ message: 'Message sent successfully' });
@@ -42,6 +47,7 @@ router.put('/projects/:id', authMiddleware, adminController.updateProject);
 router.delete('/projects/:id', authMiddleware, adminController.deleteProject);
 
 router.get('/reviews', adminController.getReviews);
+router.get('/reviews/admin', authMiddleware, adminController.getReviewsForAdmin);
 router.post('/reviews/upload', upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded' });
@@ -52,7 +58,7 @@ router.post('/reviews/upload', upload.single('image'), (req, res) => {
   res.json({ url: req.file.path });
 });
 router.get('/reviews/invite/:token', adminController.getReviewInvite);
-router.post('/reviews/submit', adminController.submitReviewWithInvite);
+router.post('/reviews/submit', reviewSubmitLimiter, validateReviewSubmit, adminController.submitReviewWithInvite);
 router.post('/reviews/invite', authMiddleware, adminController.createReviewInvite);
 router.post('/reviews', authMiddleware, adminController.createReview);
 router.put('/reviews/:id', authMiddleware, adminController.updateReview);

@@ -116,7 +116,7 @@ export const getSettings = async (req, res) => {
 
 export const updateSettings = async (req, res) => {
   try {
-    const settings = await Settings.findOneAndUpdate({}, req.body, { new: true, upsert: true });
+    const settings = await Settings.findOneAndUpdate({}, req.body, { returnDocument: 'after', upsert: true });
     res.json(settings);
   } catch (error) {
     res.status(400).json({ message: error.message });

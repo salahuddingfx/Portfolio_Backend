@@ -3,6 +3,10 @@ import Review from '../models/Review.js';
 import Admin from '../models/Admin.js';
 import Settings from '../models/Settings.js';
 import Visitor from '../models/Visitor.js';
+import Certificate from '../models/Certificate.js';
+import BlogPost from '../models/BlogPost.js';
+import Service from '../models/Service.js';
+import TimelineEntry from '../models/TimelineEntry.js';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 
@@ -207,6 +211,175 @@ export const deleteReview = async (req, res) => {
   try {
     await Review.findByIdAndDelete(req.params.id);
     res.json({ message: 'Review deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Certificates
+export const getCertificates = async (req, res) => {
+  try {
+    const certificates = await Certificate.find().sort({ order: 1 });
+    res.json(certificates);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const createCertificate = async (req, res) => {
+  try {
+    const certificate = await Certificate.create(req.body);
+    res.status(201).json(certificate);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const updateCertificate = async (req, res) => {
+  try {
+    const certificate = await Certificate.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(certificate);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const deleteCertificate = async (req, res) => {
+  try {
+    await Certificate.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Certificate deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Single Project
+export const getProject = async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    if (!project) return res.status(404).json({ message: 'Project not found' });
+    res.json(project);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Blog Posts
+export const getBlogPosts = async (req, res) => {
+  try {
+    const posts = await BlogPost.find().sort({ order: 1 });
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const createBlogPost = async (req, res) => {
+  try {
+    const post = await BlogPost.create(req.body);
+    res.status(201).json(post);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const updateBlogPost = async (req, res) => {
+  try {
+    const post = await BlogPost.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(post);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const getBlogPostBySlug = async (req, res) => {
+  try {
+    const post = await BlogPost.findOne({ slug: req.params.slug });
+    if (!post) return res.status(404).json({ message: 'Blog post not found' });
+    res.json(post);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteBlogPost = async (req, res) => {
+  try {
+    await BlogPost.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Blog post deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Services
+export const getServices = async (req, res) => {
+  try {
+    const services = await Service.find().sort({ order: 1 });
+    res.json(services);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const createService = async (req, res) => {
+  try {
+    const service = await Service.create(req.body);
+    res.status(201).json(service);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const updateService = async (req, res) => {
+  try {
+    const service = await Service.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(service);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const deleteService = async (req, res) => {
+  try {
+    await Service.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Service deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Timeline
+export const getTimelineEntries = async (req, res) => {
+  try {
+    const entries = await TimelineEntry.find().sort({ order: 1 });
+    res.json(entries);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const createTimelineEntry = async (req, res) => {
+  try {
+    const entry = await TimelineEntry.create(req.body);
+    res.status(201).json(entry);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const updateTimelineEntry = async (req, res) => {
+  try {
+    const entry = await TimelineEntry.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(entry);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const deleteTimelineEntry = async (req, res) => {
+  try {
+    await TimelineEntry.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Timeline entry deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

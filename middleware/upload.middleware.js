@@ -12,7 +12,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'portfolio',
-    allowed_formats: ['jpg', 'png', 'jpeg', 'webp', 'gif', 'svg']
+    allowed_formats: ['jpg', 'png', 'jpeg', 'webp', 'gif', 'svg', 'pdf']
   }
 });
 

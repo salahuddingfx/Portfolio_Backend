@@ -28,21 +28,24 @@ const seedData = async () => {
         desc: "A high-performance cloud infrastructure dashboard with real-time telemetry and neural threat detection.",
         image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1200",
         tags: ["React", "Three.js", "Node.js", "AWS"],
-        links: { live: "#", source: "#" }
+        links: { live: "#", source: "#" },
+        featured: true
       },
       {
         title: "Nexus Intelligence",
         desc: "Enterprise-grade AI integration platform for automated logistics and supply chain optimization.",
         image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1200",
         tags: ["Next.js", "Python", "TensorFlow", "Redis"],
-        links: { live: "#", source: "#" }
+        links: { live: "#", source: "#" },
+        featured: false
       },
       {
         title: "Aether Engine",
         desc: "A 3D rendering engine for the web capable of handling complex lighting and material physics.",
         image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=1200",
         tags: ["WebGL", "GLSL", "TypeScript", "WASM"],
-        links: { live: "#", source: "#" }
+        links: { live: "#", source: "#" },
+        featured: true
       }
     ]);
 

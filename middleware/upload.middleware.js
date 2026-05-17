@@ -16,6 +16,15 @@ const storage = new CloudinaryStorage({
   }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype?.startsWith('image/') || file.mimetype === 'application/pdf') {
+      return cb(null, true);
+    }
+    return cb(new Error('Only image or PDF uploads are allowed'));
+  }
+});
 
 export default upload;

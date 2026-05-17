@@ -7,7 +7,8 @@ const reviewSchema = new mongoose.Schema({
   text: { type: String, required: true },
   avatar: { type: String },
   rating: { type: Number, default: 5 },
-  order: { type: Number, default: 0 }
+  order: { type: Number, default: 0 },
+  status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'approved' }
 }, { timestamps: true });
 
 const Review = mongoose.model('Review', reviewSchema);

@@ -42,6 +42,15 @@ router.put('/projects/:id', authMiddleware, adminController.updateProject);
 router.delete('/projects/:id', authMiddleware, adminController.deleteProject);
 
 router.get('/reviews', adminController.getReviews);
+router.post('/reviews/upload', upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
+  if (req.file.mimetype && !req.file.mimetype.startsWith('image/')) {
+    return res.status(400).json({ message: 'Only image uploads are allowed' });
+  }
+  res.json({ url: req.file.path });
+});
 router.get('/reviews/invite/:token', adminController.getReviewInvite);
 router.post('/reviews/submit', adminController.submitReviewWithInvite);
 router.post('/reviews/invite', authMiddleware, adminController.createReviewInvite);

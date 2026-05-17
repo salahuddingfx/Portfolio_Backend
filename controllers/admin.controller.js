@@ -9,6 +9,8 @@ import Service from '../models/Service.js';
 import TimelineEntry from '../models/TimelineEntry.js';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
+import crypto from 'crypto';
+import { sendPasswordResetEmail } from '../utils/mail.js';
 
 // Analytics & Visitors
 export const logVisit = async (req, res) => {
@@ -137,6 +139,101 @@ export const login = async (req, res) => {
     }
     const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
     res.json({ token });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getAdminProfile = async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.adminId).select('username email');
+    if (!admin) return res.status(404).json({ message: 'Admin not found' });
+    res.json(admin);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const updateAdminProfile = async (req, res) => {
+  try {
+    const admin = await Admin.findById(req.adminId);
+    if (!admin) return res.status(404).json({ message: 'Admin not found' });
+
+    const { username, email, currentPassword, newPassword } = req.body;
+
+    if (username && username !== admin.username) {
+      const exists = await Admin.findOne({ username, _id: { $ne: admin._id } });
+      if (exists) return res.status(409).json({ message: 'Username already in use' });
+      admin.username = username;
+    }
+
+    if (email && email !== admin.email) {
+      const exists = await Admin.findOne({ email, _id: { $ne: admin._id } });
+      if (exists) return res.status(409).json({ message: 'Email already in use' });
+      admin.email = email;
+    }
+
+    if (newPassword) {
+      if (!currentPassword) {
+        return res.status(400).json({ message: 'Current password is required' });
+      }
+      const valid = await admin.comparePassword(currentPassword);
+      if (!valid) return res.status(401).json({ message: 'Current password is incorrect' });
+      admin.password = newPassword;
+    }
+
+    await admin.save();
+    res.json({ username: admin.username, email: admin.email });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const requestPasswordReset = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      return res.json({ message: 'If the email exists, a reset link was sent.' });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+    admin.resetToken = hashedToken;
+    admin.resetTokenExpires = new Date(Date.now() + 60 * 60 * 1000);
+    await admin.save();
+
+    const baseUrl = process.env.ADMIN_APP_URL || process.env.FRONTEND_URL || 'http://localhost:3001';
+    const resetUrl = `${baseUrl}/reset-password?token=${resetToken}`;
+
+    await sendPasswordResetEmail({ to: admin.email, resetUrl });
+
+    res.json({ message: 'If the email exists, a reset link was sent.' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  const { token, password } = req.body;
+  try {
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const admin = await Admin.findOne({
+      resetToken: hashedToken,
+      resetTokenExpires: { $gt: new Date() }
+    });
+
+    if (!admin) {
+      return res.status(400).json({ message: 'Reset token is invalid or expired' });
+    }
+
+    admin.password = password;
+    admin.resetToken = undefined;
+    admin.resetTokenExpires = undefined;
+    await admin.save();
+
+    res.json({ message: 'Password updated successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

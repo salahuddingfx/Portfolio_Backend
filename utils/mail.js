@@ -42,3 +42,18 @@ export const sendContactEmails = async (contactData) => {
   await transporter.sendMail(adminMailOptions);
   await transporter.sendMail(userMailOptions);
 };
+
+export const sendPasswordResetEmail = async ({ to, resetUrl }) => {
+  const mailOptions = {
+    from: `"${process.env.MAIL_FROM_NAME}" <${process.env.MAIL_FROM_ADDRESS}>`,
+    to,
+    subject: 'Admin password reset',
+    html: `
+      <h2>Password reset request</h2>
+      <p>Click the link below to reset your admin password. This link expires in 1 hour.</p>
+      <p><a href="${resetUrl}">${resetUrl}</a></p>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+};

@@ -8,6 +8,8 @@ const router = express.Router();
 
 // Public routes (for testing or initial login)
 router.post('/login', adminController.login);
+router.post('/forgot-password', adminController.requestPasswordReset);
+router.post('/reset-password', adminController.resetPassword);
 
 router.post('/contact', async (req, res) => {
   try {
@@ -24,6 +26,8 @@ router.post('/log-visit', adminController.logVisit);
 // Protected routes
 router.get('/analytics', authMiddleware, adminController.getAnalytics);
 router.get('/visitors', authMiddleware, adminController.getRecentVisitors);
+router.get('/me', authMiddleware, adminController.getAdminProfile);
+router.put('/me', authMiddleware, adminController.updateAdminProfile);
 router.post('/upload', authMiddleware, upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded' });

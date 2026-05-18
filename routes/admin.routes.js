@@ -84,4 +84,10 @@ router.delete('/timeline/:id', authMiddleware, adminController.deleteTimelineEnt
 router.get('/settings', adminController.getSettings);
 router.put('/settings', authMiddleware, adminController.updateSettings);
 
+// Partners / company logos
+router.get('/partners', adminController.getPartners);
+router.post('/partners', authMiddleware, adminController.createPartner);
+router.put('/partners/:id', authMiddleware, adminController.updatePartner);
+router.delete('/partners/:id', authMiddleware, adminController.deletePartner);
+
 export default router;

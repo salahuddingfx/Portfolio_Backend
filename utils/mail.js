@@ -4,6 +4,7 @@ const transporter = nodemailer.createTransport({
   host: process.env.MAIL_HOST,
   port: process.env.MAIL_PORT,
   secure: false, // true for 465, false for other ports
+  family: 4, // Force IPv4 to prevent ENETUNREACH on systems with unrouted IPv6 (like Render)
   auth: {
     user: process.env.MAIL_USERNAME,
     pass: process.env.MAIL_PASSWORD,

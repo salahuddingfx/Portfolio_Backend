@@ -8,6 +8,9 @@ import { startupSequence } from './utils/logger.js';
 
 const app = express();
 
+// Trust the first proxy (Render load balancer) for accurate rate limiting and client IP extraction
+app.set('trust proxy', 1);
+
 // Connect to Database
 connectDB();
 

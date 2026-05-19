@@ -1,4 +1,9 @@
+import dns from 'node:dns';
 import nodemailer from 'nodemailer';
+
+if (typeof dns.setDefaultResultOrder === 'function') {
+  dns.setDefaultResultOrder('ipv4first');
+}
 
 const toBoolean = (value, fallback = false) => {
   if (value === undefined || value === null || value === '') return fallback;
@@ -14,6 +19,12 @@ const transporter = nodemailer.createTransport({
   port: mailPort,
   secure: mailSecure,
   family: 4,
+  lookup: (hostname, options, callback) => {
+    const lookupOptions = typeof options === 'number'
+      ? { family: 4 }
+      : { ...options, family: 4 };
+    dns.lookup(hostname, lookupOptions, callback);
+  },
   requireTLS: !mailSecure,
   tls: {
     servername: mailHost,

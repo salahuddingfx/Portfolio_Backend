@@ -1,10 +1,26 @@
 import nodemailer from 'nodemailer';
 
+const toBoolean = (value, fallback = false) => {
+  if (value === undefined || value === null || value === '') return fallback;
+  return String(value).toLowerCase() === 'true';
+};
+
+const mailHost = process.env.MAIL_HOST || 'smtp.gmail.com';
+const mailPort = Number(process.env.MAIL_PORT || 0) || (toBoolean(process.env.MAIL_SECURE) ? 465 : 587);
+const mailSecure = toBoolean(process.env.MAIL_SECURE, mailPort === 465);
+
 const transporter = nodemailer.createTransport({
-  host: process.env.MAIL_HOST,
-  port: process.env.MAIL_PORT,
-  secure: false, // true for 465, false for other ports
-  family: 4, // Force IPv4 to prevent ENETUNREACH on systems with unrouted IPv6 (like Render)
+  host: mailHost,
+  port: mailPort,
+  secure: mailSecure,
+  family: 4,
+  requireTLS: !mailSecure,
+  tls: {
+    servername: mailHost,
+  },
+  connectionTimeout: Number(process.env.MAIL_CONNECTION_TIMEOUT || 15000),
+  greetingTimeout: Number(process.env.MAIL_GREETING_TIMEOUT || 15000),
+  socketTimeout: Number(process.env.MAIL_SOCKET_TIMEOUT || 20000),
   auth: {
     user: process.env.MAIL_USERNAME,
     pass: process.env.MAIL_PASSWORD,

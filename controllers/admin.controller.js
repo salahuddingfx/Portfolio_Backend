@@ -14,10 +14,63 @@ import axios from 'axios';
 import crypto from 'crypto';
 import { sendPasswordResetEmail } from '../utils/mail.js';
 
+const normalizeIp = (value) => {
+  if (!value) return '';
+  let ip = value.trim();
+  if (!ip || ip.toLowerCase() === 'unknown') return '';
+  if (ip.startsWith('::ffff:')) ip = ip.replace('::ffff:', '');
+  if (ip.startsWith('[') && ip.endsWith(']')) ip = ip.slice(1, -1);
+  return ip;
+};
+
+const isPrivateIpv4 = (ip) => {
+  const parts = ip.split('.').map(Number);
+  if (parts.length !== 4 || parts.some(Number.isNaN)) return false;
+  const [a, b] = parts;
+  if (a === 10 || a === 127 || a === 0) return true;
+  if (a === 169 && b === 254) return true;
+  if (a === 192 && b === 168) return true;
+  if (a === 172 && b >= 16 && b <= 31) return true;
+  return false;
+};
+
+const isPrivateIp = (ip) => {
+  if (!ip) return true;
+  if (ip.includes(':')) {
+    const lower = ip.toLowerCase();
+    return lower === '::1' || lower.startsWith('fe80:') || lower.startsWith('fc') || lower.startsWith('fd');
+  }
+  return isPrivateIpv4(ip);
+};
+
+const extractIps = (value) => {
+  if (!value) return [];
+  const raw = Array.isArray(value) ? value.join(',') : String(value);
+  return raw
+    .split(',')
+    .map((part) => normalizeIp(part))
+    .filter(Boolean);
+};
+
+const getClientIp = (req) => {
+  const sources = [
+    req.headers['cf-connecting-ip'],
+    req.headers['true-client-ip'],
+    req.headers['x-real-ip'],
+    req.headers['x-forwarded-for'],
+    req.socket?.remoteAddress,
+    req.connection?.remoteAddress
+  ];
+
+  const candidates = sources.flatMap(extractIps);
+  const publicIp = candidates.find((candidate) => !isPrivateIp(candidate));
+  return publicIp || candidates[0] || 'Unknown';
+};
+
 // Analytics & Visitors
 export const logVisit = async (req, res) => {
   const { path, referrer } = req.body;
-  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const ip = getClientIp(req);
   const userAgent = req.headers['user-agent'];
 
   try {
@@ -25,14 +78,16 @@ export const logVisit = async (req, res) => {
     let country = 'Unknown';
     let city = 'Unknown';
     
-    try {
-      const geoRes = await axios.get(`http://ip-api.com/json/${ip}`);
-      if (geoRes.data.status === 'success') {
-        country = geoRes.data.country;
-        city = geoRes.data.city;
+    if (ip && ip !== 'Unknown' && !isPrivateIp(ip)) {
+      try {
+        const geoRes = await axios.get(`http://ip-api.com/json/${encodeURIComponent(ip)}`);
+        if (geoRes.data.status === 'success') {
+          country = geoRes.data.country;
+          city = geoRes.data.city;
+        }
+      } catch (err) {
+        console.error('Geo lookup failed:', err.message);
       }
-    } catch (err) {
-      console.error('Geo lookup failed:', err.message);
     }
 
     await Visitor.create({

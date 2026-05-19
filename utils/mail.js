@@ -14,29 +14,32 @@ const mailHost = process.env.MAIL_HOST || 'smtp.gmail.com';
 const mailPort = Number(process.env.MAIL_PORT || 0) || (toBoolean(process.env.MAIL_SECURE) ? 465 : 587);
 const mailSecure = toBoolean(process.env.MAIL_SECURE, mailPort === 465);
 
-const transporter = nodemailer.createTransport({
-  host: mailHost,
-  port: mailPort,
-  secure: mailSecure,
-  family: 4,
-  lookup: (hostname, options, callback) => {
-    const lookupOptions = typeof options === 'number'
-      ? { family: 4 }
-      : { ...options, family: 4 };
-    dns.lookup(hostname, lookupOptions, callback);
-  },
-  requireTLS: !mailSecure,
-  tls: {
-    servername: mailHost,
-  },
-  connectionTimeout: Number(process.env.MAIL_CONNECTION_TIMEOUT || 15000),
-  greetingTimeout: Number(process.env.MAIL_GREETING_TIMEOUT || 15000),
-  socketTimeout: Number(process.env.MAIL_SOCKET_TIMEOUT || 20000),
-  auth: {
-    user: process.env.MAIL_USERNAME,
-    pass: process.env.MAIL_PASSWORD,
-  },
-});
+const createMailTransporter = async () => {
+  let hostIp = mailHost;
+  try {
+    const { address } = await dns.promises.lookup(mailHost, { family: 4 });
+    hostIp = address;
+  } catch (error) {
+    console.warn(`Failed to resolve SMTP host ${mailHost} to IPv4, falling back to hostname:`, error);
+  }
+
+  return nodemailer.createTransport({
+    host: hostIp,
+    port: mailPort,
+    secure: mailSecure,
+    requireTLS: !mailSecure,
+    tls: {
+      servername: mailHost,
+    },
+    connectionTimeout: Number(process.env.MAIL_CONNECTION_TIMEOUT || 15000),
+    greetingTimeout: Number(process.env.MAIL_GREETING_TIMEOUT || 15000),
+    socketTimeout: Number(process.env.MAIL_SOCKET_TIMEOUT || 20000),
+    auth: {
+      user: process.env.MAIL_USERNAME,
+      pass: process.env.MAIL_PASSWORD,
+    },
+  });
+};
 
 export const sendContactEmails = async (contactData) => {
   const { name, email, message, subject } = contactData;
@@ -67,6 +70,7 @@ export const sendContactEmails = async (contactData) => {
     `,
   };
 
+  const transporter = await createMailTransporter();
   await transporter.sendMail(adminMailOptions);
   await transporter.sendMail(userMailOptions);
 };
@@ -83,5 +87,6 @@ export const sendPasswordResetEmail = async ({ to, resetUrl }) => {
     `,
   };
 
+  const transporter = await createMailTransporter();
   await transporter.sendMail(mailOptions);
 };

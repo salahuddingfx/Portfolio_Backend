@@ -29,28 +29,28 @@ const seedData = async () => {
     // Create Projects
     await Project.create([
       {
-        title: "Vortex OS",
-        desc: "A high-performance cloud infrastructure dashboard with real-time telemetry and neural threat detection.",
-        image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1200",
-        tags: ["React", "Three.js", "Node.js", "AWS"],
-        links: { live: "#", source: "#" },
+        title: "StudyFlow",
+        desc: "A full-stack productivity and study-management application designed to help self-learners track progress, use Pomodoro timers, and build consistent study habits.",
+        image: "https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?auto=format&fit=crop&q=80&w=1200",
+        tags: ["Vue.js", "Node.js", "Express", "MongoDB", "Socket.io"],
+        links: { live: "https://github.com/salahuddingfx/StudyFlow", source: "https://github.com/salahuddingfx/StudyFlow" },
         featured: true
       },
       {
-        title: "Nexus Intelligence",
-        desc: "Enterprise-grade AI integration platform for automated logistics and supply chain optimization.",
-        image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=1200",
-        tags: ["Next.js", "Python", "TensorFlow", "Redis"],
-        links: { live: "#", source: "#" },
+        title: "Aether",
+        desc: "A browser-based, mobile-first 3D interactive system built with Three.js that allows users to sculpt and manipulate digital matter using motion controls.",
+        image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=1200",
+        tags: ["HTML5", "Three.js", "JavaScript", "WebGL", "CSS3"],
+        links: { live: "https://github.com/salahuddingfx/Aether", source: "https://github.com/salahuddingfx/Aether" },
+        featured: true
+      },
+      {
+        title: "Memory Master",
+        desc: "A real-time multiplayer memory-matching game built with React and Socket.io, featuring a high-fidelity glassmorphism design and state synchronization.",
+        image: "https://images.unsplash.com/photo-1606167668584-78701c57f13d?auto=format&fit=crop&q=80&w=1200",
+        tags: ["React", "Node.js", "Express", "Socket.io", "Tailwind CSS"],
+        links: { live: "https://github.com/salahuddingfx/Memory-Master", source: "https://github.com/salahuddingfx/Memory-Master" },
         featured: false
-      },
-      {
-        title: "Aether Engine",
-        desc: "A 3D rendering engine for the web capable of handling complex lighting and material physics.",
-        image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=1200",
-        tags: ["WebGL", "GLSL", "TypeScript", "WASM"],
-        links: { live: "#", source: "#" },
-        featured: true
       }
     ]);
 

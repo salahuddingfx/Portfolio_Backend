@@ -33,16 +33,40 @@ const seedData = async () => {
         desc: "A full-stack productivity and study-management application designed to help self-learners track progress, use Pomodoro timers, and build consistent study habits.",
         image: "https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?auto=format&fit=crop&q=80&w=1200",
         tags: ["Vue.js", "Node.js", "Express", "MongoDB", "Socket.io"],
-        links: { live: "https://github.com/salahuddingfx/StudyFlow", source: "https://github.com/salahuddingfx/StudyFlow" },
-        featured: true
+        links: { live: "https://github.com/salahuddingfx/Study-Flow", source: "https://github.com/salahuddingfx/Study-Flow" },
+        category: "Full Stack",
+        featured: true,
+        order: 1
       },
       {
-        title: "Aether",
-        desc: "A browser-based, mobile-first 3D interactive system built with Three.js that allows users to sculpt and manipulate digital matter using motion controls.",
+        title: "SalahUddin OS",
+        desc: "A hyper-interactive, cinematic Operating System simulation running entirely in the browser, featuring custom terminal utilities, window management, desktop widgets, and live tool pipelines.",
         image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=1200",
+        tags: ["React", "TypeScript", "Tailwind CSS", "Framer Motion", "Vite"],
+        links: { live: "https://github.com/salahuddingfx/MY-OS", source: "https://github.com/salahuddingfx/MY-OS" },
+        category: "System Sim",
+        featured: true,
+        order: 2
+      },
+      {
+        title: "Aether 3D Engine",
+        desc: "A browser-based, mobile-first 3D interactive system built with Three.js that allows users to sculpt and manipulate digital matter using motion controls.",
+        image: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&q=80&w=1200",
         tags: ["HTML5", "Three.js", "JavaScript", "WebGL", "CSS3"],
-        links: { live: "https://github.com/salahuddingfx/Aether", source: "https://github.com/salahuddingfx/Aether" },
-        featured: true
+        links: { live: "https://github.com/salahuddingfx/Gesture-System", source: "https://github.com/salahuddingfx/Gesture-System" },
+        category: "Creative 3D",
+        featured: true,
+        order: 3
+      },
+      {
+        title: "NoteSphere",
+        desc: "A high-performance Academic Intelligence platform and note-sharing system designed for student resource indexing, search optimization, and academic collaboration.",
+        image: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=1200",
+        tags: ["React", "Node.js", "Express", "MongoDB", "Tailwind CSS"],
+        links: { live: "https://github.com/salahuddingfx/NoteSphere", source: "https://github.com/salahuddingfx/NoteSphere" },
+        category: "Full Stack",
+        featured: false,
+        order: 4
       },
       {
         title: "Memory Master",
@@ -50,7 +74,19 @@ const seedData = async () => {
         image: "https://images.unsplash.com/photo-1606167668584-78701c57f13d?auto=format&fit=crop&q=80&w=1200",
         tags: ["React", "Node.js", "Express", "Socket.io", "Tailwind CSS"],
         links: { live: "https://github.com/salahuddingfx/Memory-Master", source: "https://github.com/salahuddingfx/Memory-Master" },
-        featured: false
+        category: "Game",
+        featured: false,
+        order: 5
+      },
+      {
+        title: "Habit-OS",
+        desc: "A next-generation AI-powered health tracking and habit management ecosystem built to optimize personal health metrics, exercise routines, and wellness targets.",
+        image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=1200",
+        tags: ["Vue.js", "Node.js", "Express", "MongoDB", "Tailwind CSS"],
+        links: { live: "https://github.com/salahuddingfx/Habit-OS", source: "https://github.com/salahuddingfx/Habit-OS" },
+        category: "Full Stack",
+        featured: false,
+        order: 6
       }
     ]);
 

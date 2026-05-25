@@ -154,7 +154,8 @@ const seedData = async () => {
         tags: ["Next.js", "Architecture", "Performance"],
         category: "Engineering",
         readTime: "5 min read",
-        publishedAt: "Oct 24, 2023"
+        publishedAt: "Oct 24, 2023",
+        order: 1
       },
       {
         title: "Crafting Spatial UI: A Guide to 3D on the Web",
@@ -165,7 +166,44 @@ const seedData = async () => {
         tags: ["Three.js", "WebGL", "Design"],
         category: "Creative",
         readTime: "8 min read",
-        publishedAt: "Nov 12, 2023"
+        publishedAt: "Nov 12, 2023",
+        order: 2
+      },
+      {
+        title: "Optimizing Next.js for Core Web Vitals",
+        slug: "optimizing-nextjs-core-web-vitals",
+        excerpt: "Deep dive into resource preloading, dynamic imports, font optimization, and image treatments to score a perfect 100 on Lighthouse.",
+        content: "Performance is a feature. In this article, we outline advanced techniques for auditing next/image usage, configuring preconnect hints, and minimizing hydration delays in App Router applications...",
+        image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200",
+        tags: ["Next.js", "Performance", "SEO"],
+        category: "Engineering",
+        readTime: "6 min read",
+        publishedAt: "Jan 15, 2024",
+        order: 3
+      },
+      {
+        title: "The Power of Micro-Animations in UX Design",
+        slug: "power-of-micro-animations-ux",
+        excerpt: "How tiny, subtle micro-interactions keep users engaged, reduce cognitive load, and make websites feel responsive and alive.",
+        content: "Great design is experienced, not just seen. Micro-animations guide the user's attention, signal successful state changes, and inject delight into daily interactions. We discuss implementing custom curves in CSS and GSAP...",
+        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200",
+        tags: ["GSAP", "UX", "Animation"],
+        category: "Creative",
+        readTime: "4 min read",
+        publishedAt: "Feb 08, 2024",
+        order: 4
+      },
+      {
+        title: "Mastering State Synchronization with WebSockets",
+        slug: "mastering-state-synchronization-websockets",
+        excerpt: "A practical guide to building low-latency, real-time multiplayer systems using React, Node.js, and Socket.io with reliable packet handling.",
+        content: "Real-time sync requires rigorous conflict resolution and packet queuing. In this post, we construct a resilient client-server message pipeline, resolve state drift, and handle reconnections gracefully...",
+        image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&q=80&w=1200",
+        tags: ["Node.js", "Socket.io", "React"],
+        category: "Engineering",
+        readTime: "7 min read",
+        publishedAt: "Mar 12, 2024",
+        order: 5
       }
     ]);
 

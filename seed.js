@@ -208,6 +208,27 @@ const seedData = async () => {
         price: "Contact for pricing",
         icon: "Layers",
         tags: ["AWS", "Docker", "Microservices", "Redis"]
+      },
+      {
+        title: "Database Optimization",
+        description: "Designing high-performance, secure database schemas with optimized indexing, caching, and security hardening.",
+        price: "Contact for pricing",
+        icon: "Database",
+        tags: ["PostgreSQL", "Mongoose", "Redis", "Security"]
+      },
+      {
+        title: "AI & ML Integrations",
+        description: "Integrating LLMs, training custom machine learning models, and building agentic AI workflows.",
+        price: "Contact for pricing",
+        icon: "BrainIcon",
+        tags: ["OpenAI", "TensorFlow", "NLP", "LangChain"]
+      },
+      {
+        title: "UI/UX & Prototyping",
+        description: "Crafting beautiful, high-fidelity design systems and interactive interfaces focused on user engagement.",
+        price: "Contact for pricing",
+        icon: "Design",
+        tags: ["Figma", "Design Systems", "Prototyping", "Aesthetics"]
       }
     ]);
 
